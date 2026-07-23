@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>健身计划控制台 · 半年瘦身塑形</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',-apple-system,sans-serif; background:#0f0f12; color:#e4e4e7; line-height:1.5; }
+.container { max-width:1100px; margin:0 auto; padding:24px 20px; }
+
+/* header */
+.header { margin-bottom:28px; }
+.header h1 { font-size:28px; font-weight:600; letter-spacing:-0.4px; }
+.header p { color:#a1a1aa; font-size:14px; margin-top:4px; }
+
+/* stats grid */
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-bottom:28px; }
+.stat-card { background:#1a1a1e; border-radius:8px; padding:12px 14px; }
+.stat-label { font-size:11px; color:#71717a; text-transform:uppercase; letter-spacing:0.4px; }
+.stat-value { font-size:20px; font-weight:600; margin-top:2px; }
+.stat-target { font-size:12px; color:#22c55e; margin-top:1px; }
+.danger { color:#ef4444; }
+
+/* phases */
+.phases { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; margin-bottom:28px; }
+.phase-card { background:#1a1a1e; border-radius:8px; padding:16px; border-left:3px solid; }
+.phase-1 { border-color:#3b82f6; }
+.phase-2 { border-color:#22c55e; }
+.phase-3 { border-color:#a855f7; }
+.phase-4 { border-color:#f59e0b; }
+.phase-card h3 { font-size:15px; font-weight:600; }
+.phase-card .weeks { font-size:12px; color:#71717a; margin:2px 0 8px; }
+.phase-card p { font-size:13px; color:#a1a1aa; }
+
+/* section title */
+.section-title { font-size:16px; font-weight:600; margin:24px 0 12px; color:#e4e4e7; }
+
+/* workout table */
+.workout-table { background:#1a1a1e; border-radius:8px; overflow:hidden; margin-bottom:20px; }
+.workout-table .table-header { display:grid; grid-template-columns:3fr 1fr 1fr 1fr; padding:10px 14px; background:#232327; font-size:11px; font-weight:600; color:#71717a; text-transform:uppercase; letter-spacing:0.4px; }
+.workout-table .table-row { display:grid; grid-template-columns:3fr 1fr 1fr 1fr; padding:10px 14px; border-top:1px solid #1e1e22; font-size:13px; }
+.workout-table .table-row:first-of-type { border-top:none; }
+.workout-table .table-row .note { color:#71717a; font-size:11px; }
+
+/* schedule */
+.schedule { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:20px; }
+.sched-day { background:#1a1a1e; border-radius:6px; padding:8px; text-align:center; }
+.sched-day .dow { font-size:11px; color:#71717a; font-weight:600; }
+.sched-day .content { font-size:12px; margin-top:4px; color:#a1a1aa; }
+.sched-day .rest { color:#52525b; }
+.sched-day .workout { color:#22c55e; font-weight:500; }
+.sched-day .cardio { color:#3b82f6; }
+
+/* tabs */
+.tabs { display:flex; gap:4px; margin-bottom:14px; flex-wrap:wrap; }
+.tab-btn { background:#1a1a1e; border:none; color:#71717a; padding:8px 16px; border-radius:6px; font-size:13px; cursor:pointer; transition:all .15s; }
+.tab-btn:hover { background:#232327; color:#e4e4e7; }
+.tab-btn.active { background:#3b82f6; color:#fff; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+/* diet */
+.diet-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-bottom:20px; }
+.diet-card { background:#1a1a1e; border-radius:8px; padding:14px; }
+.diet-card h4 { font-size:13px; font-weight:600; margin-bottom:6px; color:#e4e4e7; }
+.diet-card ul { list-style:none; font-size:12px; color:#a1a1aa; }
+.diet-card ul li::before { content:"· "; color:#3b82f6; }
+.diet-card .cal { font-size:24px; font-weight:600; color:#22c55e; }
+.diet-card .cal-label { font-size:11px; color:#71717a; }
+.diet-table { width:100%; border-collapse:collapse; font-size:12px; }
+.diet-table td { padding:6px 8px; border-bottom:1px solid #1e1e22; }
+.diet-table td:first-child { color:#a1a1aa; width:100px; }
+.diet-table td:last-child { color:#e4e4e7; }
+
+/* faq */
+.faq { background:#1a1a1e; border-radius:8px; padding:16px; margin-bottom:20px; }
+.faq details { margin-bottom:8px; }
+.faq details:last-child { margin-bottom:0; }
+.faq summary { font-size:13px; font-weight:600; cursor:pointer; color:#e4e4e7; padding:6px 0; }
+.faq summary::marker { color:#3b82f6; }
+.faq .answer { font-size:13px; color:#a1a1aa; padding:6px 0 4px 12px; border-left:2px solid #232327; margin-top:4px; }
+
+/* progress check */
+.checkpoints { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+.checkpoint { background:#1a1a1e; border-radius:8px; padding:14px; }
+.checkpoint h4 { font-size:13px; font-weight:600; color:#22c55e; }
+.checkpoint p { font-size:12px; color:#a1a1aa; margin-top:4px; }
+
+@media (max-width:640px) {
+  .schedule { grid-template-columns:repeat(7,1fr); gap:3px; }
+  .sched-day { padding:4px; }
+  .sched-day .content { font-size:10px; }
+  .stats { grid-template-columns:repeat(3,1fr); }
+  .phases { grid-template-columns:1fr; }
+  .workout-table .table-header, .workout-table .table-row { grid-template-columns:2fr 1fr 1fr 1fr; font-size:11px; }
+  .checkpoints { grid-template-columns:1fr; }
+  .diet-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Header -->
+<div class="header">
+  <h1>健身控制台</h1>
+  <p>瘦身 + 塑形 · 半年计划 · 基于身体数据定制</p>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat-card"><div class="stat-label">体重</div><div class="stat-value">76.5<span style="font-size:12px;color:#71717a">kg</span></div><div class="stat-target">→ 69-70kg</div></div>
+  <div class="stat-card"><div class="stat-label">体脂率</div><div class="stat-value">23.5<span style="font-size:12px;color:#71717a">%</span></div><div class="stat-target">→ 16-17%</div></div>
+  <div class="stat-card"><div class="stat-label">体脂肪</div><div class="stat-value">18<span style="font-size:12px;color:#71717a">kg</span></div><div class="stat-target">→ 11-12kg</div></div>
+  <div class="stat-card"><div class="stat-label">骨骼肌</div><div class="stat-value">31.8<span style="font-size:12px;color:#71717a">kg</span></div><div class="stat-target">→ 35kg+</div></div>
+  <div class="stat-card"><div class="stat-label">腰臀比</div><div class="stat-value">0.88</div><div class="stat-target">→ <0.82</div></div>
+  <div class="stat-card"><div class="stat-label">BMI</div><div class="stat-value">23.9</div><div class="stat-target">→ 21.5</div></div>
+  <div class="stat-card"><div class="stat-label">基础代谢</div><div class="stat-value">1634<span style="font-size:12px;color:#71717a">kcal</span></div><div class="stat-target">每日摄入 1500-1700</div></div>
+</div>
+
+<!-- Phases -->
+<div class="phases">
+  <div class="phase-card phase-1"><h3>阶段一：基础适应</h3><div class="weeks">第 1-8 周 · 每周3练</div><p>学习动作模式、建立运动习惯。全身训练 A/B/C 循环，掌握蹲/推/拉/铰链/核心稳定。</p></div>
+  <div class="phase-card phase-2"><h3>阶段二：力量增长</h3><div class="weeks">第 9-16 周 · 每周3-4练</div><p>上下肢分化训练，增加负重，促进肌肉生长，逐步过渡到4练。</p></div>
+  <div class="phase-card phase-3"><h3>阶段三：进阶塑形</h3><div class="weeks">第 17-24 周 · 每周4练</div><p>推/拉/腿 PPL 分化，加入 HIIT，精细化雕刻手臂、肩、腹肌。</p></div>
+  <div class="phase-card phase-4"><h3>长期维持</h3><div class="weeks">第 25 周起</div><p>体脂达标后转为维持训练，或选择增肌期-减脂期循环。</p></div>
+</div>
+
+<!-- Tabs -->
+<div class="section-title">训练计划</div>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('phase1')">阶段1 · 基础适应</button>
+  <button class="tab-btn" onclick="switchTab('phase2')">阶段2 · 力量增长</button>
+  <button class="tab-btn" onclick="switchTab('phase3')">阶段3 · 进阶塑形</button>
+  <button class="tab-btn" onclick="switchTab('diet')">饮食营养</button>
+</div>
+
+<!-- Phase 1 -->
+<div id="phase1" class="tab-content active">
+  <p style="font-size:13px;color:#a1a1aa;margin-bottom:10px;">全身训练 A/B/C 循环，每次训练后加坡度走 15-20 分钟（坡度8-10，速度3-4km/h）</p>
+
+  <div class="schedule" style="margin-bottom:16px;">
+    <div class="sched-day"><div class="dow">一</div><div class="content workout">模板A/C</div></div>
+    <div class="sched-day"><div class="dow">二</div><div class="content rest">休息</div></div>
+    <div class="sched-day"><div class="dow">三</div><div class="content workout">模板B/A</div></div>
+    <div class="sched-day"><div class="dow">四</div><div class="content rest">休息</div></div>
+    <div class="sched-day"><div class="dow">五</div><div class="content workout">模板C/B</div></div>
+    <div class="sched-day"><div class="dow">六</div><div class="content cardio">散步/有氧</div></div>
+    <div class="sched-day"><div class="dow">日</div><div class="content rest">休息</div></div>
+  </div>
+
+  <div class="section-title" style="margin-top:0;">模板A · 下肢+核心</div>
+  <div class="workout-table">
+    <div class="table-header"><span>动作</span><span>组数×次数</span><span>重量</span><span>休息</span></div>
+    <div class="table-row"><span>徒手/高脚杯深蹲</span><span>3×12-15</span><span>5-8kg</span><span>60s</span></div>
+    <div class="table-row"><span>哑铃臀桥</span><span>3×12-15</span><span>10-15kg</span><span>60s</span></div>
+    <div class="table-row"><span>哑铃后撤弓步蹲</span><span>3×10-12/侧</span><span>5-8kg</span><span>45s</span></div>
+    <div class="table-row"><span>平板支撑</span><span>3×20-30s</span><span>自重</span><span>45s</span></div>
+    <div class="table-row"><span>仰卧抬腿</span><span>3×15</span><span>自重</span><span>30s</span></div>
+    <div class="table-row"><span>鸟狗式</span><span>3×10/侧</span><span>自重</span><span>30s</span></div>
+  </div>
+
+  <div class="section-title">模板B · 上肢推+拉</div>
+  <div class="workout-table">
+    <div class="table-header"><span>动作</span><span>组数×次数</span><span>重量</span><span>休息</span></div>
+    <div class="table-row"><span>哑铃/器械胸推</span><span>3×12-15</span><span>8-10kg</span><span>60s</span></div>
+    <div class="table-row"><span>坐姿划船</span><span>3×12-15</span><span>中阻力</span><span>60s</span></div>
+    <div class="table-row"><span>哑铃过头推举</span><span>3×10-12</span><span>5-8kg</span><span>60s</span></div>
+    <div class="table-row"><span>高位下拉</span><span>3×12-15</span><span>中重量</span><span>60s</span></div>
+    <div class="table-row"><span>哑铃侧平举</span><span>3×12-15</span><span>3-5kg</span><span>30s</span></div>
+    <div class="table-row"><span>面拉</span><span>3×15</span><span>轻重量</span><span>45s</span></div>
+  </div>
+
+  <div class="section-title">模板C · 全身综合</div>
+  <div class="workout-table">
+    <div class="table-header"><span>动作</span><span>组数×次数</span><span>重量</span><span>休息</span></div>
+    <div class="table-row"><span>高脚杯深蹲</span><span>3×12-15</span><span>5-10kg</span><span>60s</span></div>
+    <div class="table-row"><span>俯身划船</span><span>3×12-15</span><span>8-12kg</span><span>60s</span></div>
+    <div class="table-row"><span>哑铃平躺胸推</span><span>3×12-15</span><span>8-10kg</span><span>60s</span></div>
+    <div class="table-row"><span>哑铃罗马尼亚硬拉</span><span>3×12-15</span><span>10-15kg</span><span>60s</span></div>
+    <div class="table-row"><span>平板支撑转体</span><span>3×12/侧</span><span>自重</span><span>45s</span></div>
+    <div class="table-row"><span>登山跑</span><span>3×20-30s</span><span>自重</span><span>30s</span></div>
+  </div>
+</div>
+
+<!-- Phase 2 -->
+<div id="phase2" class="tab-content">
+  <p style="font-size:13px;color:#a1a1aa;margin-bottom:10px;">上下肢分化（Upper/Lower Split），每周3练，偶尔4练。有氧：坡度走或单车20分钟。</p>
+
+  <div class="schedule" style="margin-bottom:16px;">
+    <div class="sched-day"><div class="dow">一</div><div class="content workout">下肢</div></div>
+    <div class="sched-day"><div class="dow">二</div><div class="content rest">休息</div></div>
+    <div class="sched-day"><div class="dow">三</div><div class="content workout">上肢</div></div>
+    <div class="sched-day"><div class="dow">四</div><div class="content rest">休息</div></div>
+    <div class="sched-day"><div class="dow">五</div><div class="content workout">下肢</div></div>
+    <div class="sched-day"><div class="dow">六</div><div class="content cardio">有氧/慢跑</div></div>
+    <div class="sched-day"><div class="dow">日</div><div class="content rest">休息</div></div>
+  </div>
+  <p style="font-size:12px;color:#52525b;margin-bottom:12px;">偶尔4练周：周一下肢 / 周二上肢 / 周四下肢 / 周五上肢</p>
+
+  <div class="section-title" style="margin-top:0;">下肢日</div>
+  <div class="workout-table">
+    <div class="table-header"><span>动作</span><span>组数×次数</span><span>重量建议</span><span>休息</span></div>
+    <div class="table-row"><span>杠铃/史密斯深蹲</span><span>4×8-12</span><span>逐步加重</span><span>90s</span></div>
+    <div class="table-row"><span>罗马尼亚硬拉</span><span>4×10-12</span><span>中等</span><span>60-90s</span></div>
+    <div class="table-row"><span>腿举/保加利亚分腿蹲</span><span>3×10-12</span><span>中等</span><span>60s</span></div>
+    <div class="table-row"><span>行走弓步蹲</span><span>3×10-12/侧</span><span>8-12kg</span><span>45s</span></div>
+    <div class="table-row"><span>坐姿腿弯举</span><span>3×12-15</span><span>轻-中</span><span>45s</span></div>
+    <div class="table-row"><span>站姿提踵</span><span>3×15-20</span><span>自重/负重</span><span>30s</span></div>
+  </div>
+
+  <div class="section-title">上肢日</div>
+  <div class="workout-table">
+    <div class="table-header"><span>动作</span><span>组数×次数</span><span>重量建议</span><span>休息</span></div>
+    <div class="table-row"><span>哑铃/器械胸推</span><span>4×8-12</span><span>可做组</span><span>90s</span></div>
+    <div class="table-row"><span>高位下拉(宽握)</span><span>4×10-12</span><span>中上</span><span>60-90s</span></div>
+    <div class="table-row"><span>坐姿划船</span><span>3×10-12</span><span>中等</span><span>60s</span></div>
+    <div class="table-row"><span>过头推举(可选)</span><span>3×8-10</span><span>中等</span><span>60s</span></div>
+    <div class="table-row"><span>绳索下压/窄距俯卧撑</span><span>3×12-15</span><span>轻</span><span>45s</span></div>
+    <div class="table-row"><span>哑铃二头弯举</span><span>3×10-12</span><span>6-10kg</span><span>45s</span></div>
+    <div class="table-row"><span>侧平举+面拉超级组</span><span>3×12+15</span><span>轻</span><span>45s</span></div>
+  </div>
+
+  <div class="section-title">核心（上肢日加做）</div>
+  <div class="workout-table">
+    <div class="table-header"><span>动作</span><span>组数×次数</span><span>休息</span></div>
+    <div class="table-row"><span>平板支撑</span><span>3×40-60s</span><span>45s</span></div>
+    <div class="table-row"><span>反向卷腹</span><span>3×15</span><span>30s</span></div>
+    <div class="table-row"><span>死虫式</span><span>3×10/侧</span><span>30s</span></div>
+  </div>
+</div>
+
+<!-- Phase 3 -->
+<div id="phase3" class="tab-content">
+  <p style="font-size:13px;color:#a1a1aa;margin-bottom:10px;">推/拉/腿 PPL 分化，每周4练。有氧：15分钟坡度走+5分钟间歇 或 HIIT 8轮。</p>
+
+  <div class="schedule" style="margin-bottom:16px;">
+    <div class="sched-day"><div class="dow">一</div><div class="content workout">推日</div></div>
+    <div class="sched-day"><div class="dow">二</div><div class="content workout">拉日</div></div>
+    <div class="sched-day"><div class="dow">三</div><div class="content rest">休息</div></div>
+    <div class="sched-day"><div class="dow">四</div><div class="content workout">腿日</div></div>
+    <div class="sched-day"><div class="dow">五</div><div class="content workout">全身/补强</div></div>
+    <div class="sched-day"><div class="dow">六</div><div class="content cardio">有氧/HIIT</div></div>
+    <div class="sched-day"><div class="dow">日</div><div class="content rest">休息</div></div>
+  </div>
+
+  <div class="section-title" style="margin-top:0;">推日（胸+肩+三头）</div>
+  <div class="workout-table">
+    <div class="table-header"><span>动作</span><span>组数×次数</span><span>说明</span></div>
+    <div class="table-row"><span>杠铃/哑铃平板卧推</span><span>4×8-10</span><span>主项</span></div>
+    <div class="table-row"><span>上斜哑铃胸推</span><span>3×10-12</span><span>上胸</span></div>
+    <div class="table-row"><span>哑铃侧平举</span><span>3×12-15</span><span>增加肩宽</span></div>
+    <div class="table-row"><span>前平举</span><span>3×12</span><span>前束</span></div>
+    <div class="table-row"><span>过头三头屈伸</span><span>3×12-15</span><span>手臂后侧</span></div>
+    <div class="table-row"><span>窄距俯卧撑/双杠臂屈伸</span><span>3×力竭</span><span>收尾</span></div>
+  </div>
+
+  <div class="section-title">拉日（背+二头+后束）</div>
+  <div class="workout-table">
+    <div class="table-header"><span>动作</span><span>组数×次数</span><span>说明</span></div>
+    <div class="table-row"><span>引体向上(辅助)</span><span>4×尽量多</span><span>背宽</span></div>
+    <div class="table-row"><span>杠铃划船</span><span>4×8-10</span><span>背厚</span></div>
+    <div class="table-row"><span>坐姿绳索划船</span><span>3×10-12</span><span>中背</span></div>
+    <div class="table-row"><span>面拉</span><span>3×15</span><span>后束</span></div>
+    <div class="table-row"><span>哑铃二头弯举</span><span>4×10-12</span><span>手臂前侧</span></div>
+    <div class="table-row"><span>锤式弯举</span><span>3×12-15</span><span>肱肌</span></div>
+  </div>
+
+  <div class="section-title">腿日</div>
+  <div class="workout-table">
+    <div class="table-header"><span>动作</span><span>组数×次数</span><span>说明</span></div>
+    <div class="table-row"><span>杠铃深蹲</span><span>4×6-10</span><span>主项</span></div>
+    <div class="table-row"><span>罗马尼亚硬拉</span><span>4×8-12</span><span>后链</span></div>
+    <div class="table-row"><span>腿举/保加利亚分腿蹲</span><span>3×10-12</span><span>单侧补强</span></div>
+    <div class="table-row"><span>行走弓步蹲</span><span>3×10-12/侧</span><span>臀部稳定</span></div>
+    <div class="table-row"><span>坐姿腿弯举</span><span>3×12-15</span><span>股二头</span></div>
+    <div class="table-row"><span>提踵</span><span>3×15-20</span><span>小腿</span></div>
+  </div>
+</div>
+
+<!-- Diet -->
+<div id="diet" class="tab-content">
+  <div class="diet-grid">
+    <div class="diet-card">
+      <div class="cal">1500-1700</div>
+      <div class="cal-label">每日推荐摄入（kcal）</div>
+      <div style="font-size:12px;color:#a1a1aa;margin-top:6px;">训练日偏上限，非训练日偏下限</div>
+    </div>
+    <div class="diet-card">
+      <h4>蛋白质 · 30-35%</h4>
+      <ul><li>至少 122g/天（1.6g/kg体重）</li><li>鸡胸肉、鱼虾、鸡蛋、瘦牛肉</li><li>豆腐、牛奶、蛋白粉</li></ul>
+    </div>
+    <div class="diet-card">
+      <h4>碳水 · 35-40%</h4>
+      <ul><li>训练日偏高，晚餐减半</li><li>燕麦、全麦面包、杂粮饭</li><li>训练前吃香蕉或一片面包</li></ul>
+    </div>
+    <div class="diet-card">
+      <h4>脂肪 · 25-30%</h4>
+      <ul><li>不低于总热量20%</li><li>坚果、牛油果、橄榄油</li><li>蛋黄、鱼油（三文鱼）</li></ul>
+    </div>
+  </div>
+
+  <div class="section-title">每日饮食时间安排</div>
+  <div class="workout-table">
+    <div class="table-header"><span>时间</span><span>内容</span><span>备注</span></div>
+    <div class="table-row"><span>07:30 早餐</span><span>燕麦/全麦面包 + 鸡蛋 + 牛奶</span><span>一定要吃</span></div>
+    <div class="table-row"><span>10:30 可选加餐</span><span>水果 或 一小把坚果</span><span>饿就吃不饿跳过</span></div>
+    <div class="table-row"><span>12:00 午餐</span><span>杂粮饭 + 肉/鱼 + 蔬菜</span><span>7-8分饱</span></div>
+    <div class="table-row"><span>15:30 训练前加餐</span><span>全麦面包 或 香蕉</span><span>训练当天</span></div>
+    <div class="table-row"><span>18:00 晚餐</span><span>少量碳水 + 蛋白质 + 大量蔬菜</span><span>碳水减半</span></div>
+    <div class="table-row"><span>21:00 若饿</span><span>鸡蛋清 / 无糖酸奶</span><span>睡前少碳水</span></div>
+  </div>
+
+  <div class="section-title">饮水</div>
+  <p style="font-size:13px;color:#a1a1aa;">每天 2.5-3L 水，训练中每 15-20 分钟小口补水</p>
+</div>
+
+<!-- Checkpoints -->
+<div class="section-title">检查节点</div>
+<div class="checkpoints">
+  <div class="checkpoint"><h4>第12周检查点</h4><p>重新测量身体数据，对照目标调整下一阶段计划</p></div>
+  <div class="checkpoint"><h4>第24周检查点</h4><p>全面评估。决定进入维持期继续减脂，还是转为增肌循环</p></div>
+</div>
+
+<!-- FAQ -->
+<div class="section-title">常见问题</div>
+<div class="faq">
+  <details><summary>练完非常酸痛怎么办？</summary><div class="answer">初期正常（DOMS）。休息即可，可散步促进恢复。如影响下一练，推迟一天不用硬上。</div></details>
+  <details><summary>几周了体重没怎么变？</summary><div class="answer">肌肉增长会使体重变化不明显。关注体脂率、腰围、照片对比。连续3-4周无变化可减100-150kcal/天。</div></details>
+  <details><summary>动作做不到标准？</summary><div class="answer">优先做退阶版本（如跪姿俯卧撑）。动作质量比重量重要，可录像自检或看教学视频。</div></details>
+  <details><summary>出差/中断训练？</summary><div class="answer">3-5天不影响直接继续。1周以上回来用轻一档过渡一练。2周以上退回前一阶段练1-2周。</div></details>
+  <details><summary>什么时候加重量？</summary><div class="answer">目标次数内最后2个感觉轻松且动作规范，下次加重2-4kg（哑铃）或5kg（杠铃）。</div></details>
+  <details><summary>需要什么装备？</summary><div class="answer">训练鞋、运动服、水壶、毛巾即可。半年内不需要腰带等护具。</div></details>
+  <details><summary>要不要吃补剂？</summary><div class="answer">初期不需要，蛋白质吃够即可。半年后考虑乳清蛋白粉或肌酸。</div></details>
+  <details><summary>一周只能练2次？</summary><div class="answer">每次全身训练，覆盖下肢+上肢+核心各2个动作，50分钟。比不练好得多。</div></details>
+</div>
+
+<!-- Footer -->
+<div style="text-align:center;padding:24px 0 12px;font-size:12px;color:#52525b;">
+  宁可温和坚持，不要激进的放弃 · 受伤是最大的退步
+</div>
+
+</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
